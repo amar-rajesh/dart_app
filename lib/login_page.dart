@@ -1,4 +1,4 @@
-// ignore: unused_import
+import 'package:dart_app/home_page.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatefulWidget {
@@ -23,7 +23,7 @@ class _LoginPageState extends State<LoginPage> {
       decoration: BoxDecoration(
         color: myColor,
         image: DecorationImage(
-          image: const AssetImage('assets/farm.jpeg'),
+          image: const AssetImage('assets/farm.jpg'),
           fit: BoxFit.cover,
           colorFilter:
               ColorFilter.mode(myColor.withOpacity(0.2), BlendMode.dstATop),
@@ -153,6 +153,10 @@ class _LoginPageState extends State<LoginPage> {
       onPressed: () {
         debugPrint("Email : ${emailController.text}");
         debugPrint("Password : ${passwordController.text}");
+        Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => HomePage()),
+        );
       },
       style: ElevatedButton.styleFrom(
         shape: const StadiumBorder(),
@@ -173,7 +177,7 @@ class _LoginPageState extends State<LoginPage> {
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Tab(icon: Image.asset("assets/google.jpeg")),
+              Tab(icon: Image.asset("assets/google.png")),
             ],
           )
         ],
