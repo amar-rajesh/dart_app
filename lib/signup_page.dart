@@ -1,296 +1,300 @@
 import 'package:flutter/material.dart';
-
 import 'login_page.dart';
 
-class SignupPage extends StatefulWidget {
-  const SignupPage({Key? key}) : super(key: key);
+void main() {
+  runApp(SignupPage());
+}
 
+class SignupPage extends StatefulWidget {
   @override
-  State<SignupPage> createState() => _SignupPageState();
+  _SignupPageState createState() => _SignupPageState();
 }
 
 class _SignupPageState extends State<SignupPage> {
-  late Color myColor;
-  late Size mediaSize;
-  TextEditingController nameController = TextEditingController();
-  TextEditingController emailController = TextEditingController();
-  TextEditingController passwordController = TextEditingController();
-  TextEditingController confirmPasswordController = TextEditingController();
-  TextEditingController mobileController = TextEditingController();
-  bool agreeToTerms = false;
-  String selectedFilter = "Farmer";
-  bool isPasswordVisible = false;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  String firstName = '';
+  String surname = '';
+  String email = '';
+  String phoneNumber = '';
+  String password = '';
+  String confirmPassword = '';
+  String selectedRole = 'Farmer'; // Default role
+  bool agreedToTerms = false;
+  bool passwordVisible = false; // Track password visibility
+  bool passwordMatch = true; // Track password match
 
   @override
   Widget build(BuildContext context) {
-    myColor = Theme.of(context).primaryColor;
-    mediaSize = MediaQuery.of(context).size;
-    return Container(
-      decoration: BoxDecoration(
-        color: myColor,
+    return MaterialApp(
+      debugShowCheckedModeBanner: false, // Remove debug banner
+      theme: ThemeData(
+        primaryColor: Colors.lightGreen, // Set your desired primary color here
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.lightGreen, // Set header color to light green
+          title: Text('Sign Up',
+              style: TextStyle(
+                  color: Colors.white)), // Set header text color to white
+        ),
         body: Stack(
           children: [
-            Positioned(top: 80, child: _buildTop()),
-            Positioned(bottom: 0, child: _buildBottom()),
+            Image.asset(
+              'assets/farm.jpeg', // Replace with your image asset
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+            Container(
+              color: Colors.transparent, // Make container transparent
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'First Name',
+                            fillColor: Colors
+                                .lightGreen[100], // Text field background color
+                            filled: true,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your First Name';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            firstName = value!;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Surname',
+                            fillColor: Colors
+                                .lightGreen[100], // Text field background color
+                            filled: true,
+                          ),
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your Surname';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            surname = value!;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Email',
+                            fillColor: Colors
+                                .lightGreen[100], // Text field background color
+                            filled: true,
+                          ),
+                          keyboardType: TextInputType.emailAddress,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your Email';
+                            }
+                            if (!value.contains('@') ||
+                                !value.contains('.com')) {
+                              return 'Please check your Email format';
+                            }
+                            return null;
+                          },
+                          onSaved: (value) {
+                            email = value!;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        TextFormField(
+                          decoration: InputDecoration(
+                            labelText: 'Phone Number',
+                            fillColor: Colors
+                                .lightGreen[100], // Text field background color
+                            filled: true,
+                          ),
+                          keyboardType: TextInputType.phone,
+                          validator: (value) {
+                            if (value == null || value.isEmpty) {
+                              return 'Please enter your Phone Number';
+                            }
+                            // You can add more specific phone number validation here if needed.
+                            return null;
+                          },
+                          onSaved: (value) {
+                            phoneNumber = value!;
+                          },
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Password',
+                                  fillColor: Colors.lightGreen[
+                                      100], // Text field background color
+                                  filled: true,
+                                ),
+                                obscureText: !passwordVisible,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please enter a Password';
+                                  }
+                                  if (value != confirmPassword) {
+                                    return 'Passwords do not match';
+                                  } else
+                                    return null;
+                                },
+                                onSaved: (value) {
+                                  password = value!;
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                passwordVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  passwordVisible = !passwordVisible;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                decoration: InputDecoration(
+                                  labelText: 'Confirm Password',
+                                  fillColor: Colors.lightGreen[
+                                      100], // Text field background color
+                                  filled: true,
+                                ),
+                                obscureText: !passwordVisible,
+                                validator: (value) {
+                                  if (value == null || value.isEmpty) {
+                                    return 'Please confirm your Password';
+                                  }
+                                  if (value != password) {
+                                    return 'Passwords do not match';
+                                  }
+                                  return null;
+                                },
+                                onSaved: (value) {
+                                  confirmPassword = value!;
+                                },
+                              ),
+                            ),
+                            IconButton(
+                              icon: Icon(
+                                passwordVisible
+                                    ? Icons.visibility_off
+                                    : Icons.visibility,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  passwordVisible = !passwordVisible;
+                                });
+                              },
+                            ),
+                          ],
+                        ),
+                        SizedBox(height: 10),
+                        DropdownButtonFormField(
+                          value: selectedRole,
+                          items: ['Farmer', 'Customer', 'Supplier']
+                              .map<DropdownMenuItem<String>>(
+                                (String value) => DropdownMenuItem<String>(
+                                  value: value,
+                                  child: Text(value),
+                                ),
+                              )
+                              .toList(),
+                          onChanged: (String? value) {
+                            setState(() {
+                              selectedRole = value!;
+                            });
+                          },
+                          decoration: InputDecoration(
+                            labelText: 'Role',
+                            fillColor: Colors
+                                .lightGreen[100], // Text field background color
+                            filled: true,
+                          ),
+                        ),
+                        SizedBox(height: 10),
+                        Row(
+                          children: [
+                            Checkbox(
+                              value: agreedToTerms,
+                              onChanged: (value) {
+                                setState(() {
+                                  agreedToTerms = value!;
+                                });
+                              },
+                            ),
+                            Text('I agree to the terms and conditions'),
+                          ],
+                        ),
+                        SizedBox(height: 20),
+                        ElevatedButton(
+                          onPressed: () {
+                            // Validate the form
+                            if (_formKey.currentState!.validate()) {
+                              // If the form is valid, save the data.
+                              _formKey.currentState!.save();
+                              // You can now use the validated data.
+                              // For example, print it to the console:
+                              print('First Name: $firstName');
+                              print('Surname: $surname');
+                              print('Email: $email');
+                              print('Phone Number: $phoneNumber');
+                              print('Role: $selectedRole');
+                              print('Password: $password');
+                              print('Confirm Password: $confirmPassword');
+                              print('Agreed to Terms: $agreedToTerms');
+
+                              // Navigate to the login page
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => LoginPage()),
+                              );
+                            }
+                          },
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors
+                                .lightGreen, // Set button color to light green
+                          ),
+                          child: Text('Sign Up',
+                              style: TextStyle(
+                                  color: Colors
+                                      .white)), // Set button text color to white
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
           ],
         ),
       ),
     );
-  }
-
-  Widget _buildFilterDropdown() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        _buildGreyText("Select Filter"),
-        DropdownButton<String>(
-          value: selectedFilter,
-          onChanged: (String? newValue) {
-            setState(() {
-              selectedFilter = newValue!;
-            });
-          },
-          items: <String>['Farmer', 'Supplier', 'Customer', 'Option 4']
-              .map<DropdownMenuItem<String>>((String value) {
-            return DropdownMenuItem<String>(
-              value: value,
-              child: Text(value),
-            );
-          }).toList(),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildTop() {
-    return SizedBox(
-      width: mediaSize.width,
-      child: const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.landscape_outlined,
-            size: 100,
-            color: Colors.white,
-          ),
-          Text(
-            "WELCOME!",
-            style: TextStyle(
-              color: Colors.white,
-              fontWeight: FontWeight.bold,
-              fontSize: 40,
-              letterSpacing: 2,
-            ),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottom() {
-    return SizedBox(
-      width: mediaSize.width,
-      child: Card(
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.only(
-            topLeft: Radius.circular(30),
-            topRight: Radius.circular(30),
-          ),
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: _buildForm(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildInputField(
-    TextEditingController controller, {
-    String? labelText,
-    bool isPassword = false,
-    IconData? icon,
-  }) {
-    return TextField(
-      controller: controller,
-      obscureText: isPassword && !isPasswordVisible,
-      decoration: InputDecoration(
-        labelText: labelText,
-        suffixIcon: isPassword
-            ? IconButton(
-                onPressed: () {
-                  setState(() {
-                    isPasswordVisible = !isPasswordVisible;
-                  });
-                },
-                icon: Icon(
-                  icon ??
-                      (isPasswordVisible
-                          ? Icons.visibility
-                          : Icons.visibility_off),
-                ),
-              )
-            : null,
-      ),
-    );
-  }
-
-  Widget _buildForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Create an Account, Please fill the Required Information",
-          style: TextStyle(
-            color: myColor,
-            fontSize: 15,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 3),
-        _buildGreyText("Full Name"),
-        _buildInputField(nameController),
-        const SizedBox(height: 3),
-        _buildGreyText("Email address"),
-        _buildInputField(emailController),
-        const SizedBox(height: 3),
-        _buildGreyText("Mobile Number"),
-        _buildInputField(mobileController),
-        const SizedBox(height: 3),
-        _buildGreyText("Password"),
-        _buildInputField(passwordController,
-            labelText: "Password", isPassword: true),
-        const SizedBox(height: 3),
-        _buildGreyText("Confirm Password"),
-        _buildInputField(confirmPasswordController,
-            labelText: "Confirm Password", isPassword: true),
-        const SizedBox(height: 3),
-        _buildFilterDropdown(),
-        const SizedBox(height: 3),
-        _buildTermsAndConditions(),
-        const SizedBox(height: 3),
-        _buildSignupButton(),
-        const SizedBox(height: 5),
-        _buildAlreadyHaveAccount(),
-      ],
-    );
-  }
-
-  Widget _buildGreyText(String text) {
-    return Text(
-      text,
-      style: const TextStyle(color: Color.fromARGB(255, 179, 177, 177)),
-    );
-  }
-
-  Widget _buildTermsAndConditions() {
-    return Row(
-      children: [
-        Checkbox(
-          value: agreeToTerms,
-          onChanged: (value) {
-            setState(() {
-              agreeToTerms = value!;
-            });
-          },
-        ),
-        _buildGreyText("I agree to the Terms and Conditions"),
-      ],
-    );
-  }
-
-  Widget _buildSignupButton() {
-    return ElevatedButton(
-      onPressed: () {
-        if (!_allFieldsAreFilled()) {
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(
-              content: Text('Please fill in all required information.'),
-            ),
-          );
-        } else {
-          // Perform sign up logic here
-          showDialog(
-            context: context,
-            builder: (BuildContext context) {
-              return AlertDialog(
-                title: Text("Congratulations!"),
-                content: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text("You have successfully signed up."),
-                    const SizedBox(height: 20),
-                    TextButton(
-                      onPressed: () {
-                        Navigator.pushReplacement(
-                          context,
-                          MaterialPageRoute(builder: (context) => LoginPage()),
-                        );
-                      },
-                      child: Text("Click here to login."),
-                    ),
-                  ],
-                ),
-                actions: [
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pop(context); // Close the dialog
-                    },
-                    child: Text("Close"),
-                  ),
-                ],
-              );
-            },
-          );
-        }
-      },
-      style: ElevatedButton.styleFrom(
-        shape: const StadiumBorder(),
-        elevation: 20,
-        shadowColor: myColor,
-        minimumSize: const Size.fromHeight(60),
-      ),
-      child: const Text("SIGNUP"),
-    );
-  }
-
-  bool _allFieldsAreFilled() {
-    return nameController.text.isNotEmpty &&
-        emailController.text.isNotEmpty &&
-        mobileController.text.isNotEmpty &&
-        passwordController.text.isNotEmpty &&
-        confirmPasswordController.text.isNotEmpty &&
-        agreeToTerms;
-  }
-
-  Widget _buildAlreadyHaveAccount() {
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.center,
-      children: [
-        const Text("Already have an account? "),
-        TextButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => LoginPage()),
-            );
-          },
-          child: const Text("Login"),
-        ),
-      ],
-    );
-  }
-
-  @override
-  void dispose() {
-    nameController.dispose();
-    emailController.dispose();
-    passwordController.dispose();
-    confirmPasswordController.dispose();
-    mobileController.dispose();
-    super.dispose();
   }
 }
