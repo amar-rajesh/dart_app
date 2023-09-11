@@ -1,128 +1,112 @@
-// ignore: unused_import
+import 'package:dart_app/home_page.dart';
 import 'package:flutter/material.dart';
+import 'signup_page.dart'; // Import the SignupPage where you navigate when clicking the "Sign Up" button.
+
+void main() {
+  runApp(LoginPage());
+}
 
 class LoginPage extends StatefulWidget {
-  const LoginPage({super.key});
-
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  _LoginPageState createState() => _LoginPageState();
 }
 
 class _LoginPageState extends State<LoginPage> {
-  late Color myColor;
-  late Size mediaSize;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
   TextEditingController emailController = TextEditingController();
   TextEditingController passwordController = TextEditingController();
   bool rememberUser = false;
+  bool passwordVisible = false; // Track password visibility
 
   @override
   Widget build(BuildContext context) {
-    myColor = Theme.of(context).primaryColor;
-    mediaSize = MediaQuery.of(context).size;
-    return Container(
-      decoration: BoxDecoration(
-        color: myColor,
-        image: DecorationImage(
-          image: const AssetImage('assets/farm.jpeg'),
-          fit: BoxFit.cover,
-          colorFilter:
-              ColorFilter.mode(myColor.withOpacity(0.2), BlendMode.dstATop),
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primaryColor: Colors.lightGreen, // Set your desired primary color here
+      ),
+      home: Scaffold(
+        appBar: AppBar(
+          backgroundColor: Colors.lightGreen,
+          title: Text('Login', style: TextStyle(color: Colors.white)),
+        ),
+        body: Stack(
+          children: [
+            Image.asset(
+              'assets/farm.jpeg', // Replace with your image asset
+              fit: BoxFit.cover,
+              width: double.infinity,
+              height: double.infinity,
+            ),
+            Container(
+              color: Colors.transparent,
+              child: Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Form(
+                  key: _formKey,
+                  child: SingleChildScrollView(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Welcome',
+                          style: TextStyle(
+                            color: Colors.lightGreen,
+                            fontSize: 32,
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        _buildGreyText('Please login with your information'),
+                        SizedBox(height: 60),
+                        _buildGreyText('Email address'),
+                        _buildInputField(emailController),
+                        SizedBox(height: 40),
+                        _buildGreyText('Password'),
+                        _buildInputField(passwordController, isPassword: true),
+                        SizedBox(height: 20),
+                        _buildRememberForgot(),
+                        SizedBox(height: 20),
+                        _buildLoginButton(),
+                        SizedBox(height: 20),
+                        _buildOtherLogin(),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ],
         ),
       ),
-      child: Scaffold(
-        backgroundColor: Colors.transparent,
-        body: Stack(children: [
-          Positioned(top: 80, child: _buildTop()),
-          Positioned(bottom: 0, child: _buildBottom()),
-        ]),
-      ),
-    );
-  }
-
-  Widget _buildTop() {
-    return SizedBox(
-      width: mediaSize.width,
-      child: const Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Icon(
-            Icons.landscape_outlined,
-            size: 100,
-            color: Colors.white,
-          ),
-          Text(
-            "",
-            style: TextStyle(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontSize: 40,
-                letterSpacing: 2),
-          )
-        ],
-      ),
-    );
-  }
-
-  Widget _buildBottom() {
-    return SizedBox(
-      width: mediaSize.width,
-      child: Card(
-        shape: const RoundedRectangleBorder(
-            borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(30),
-          topRight: Radius.circular(30),
-        )),
-        child: Padding(
-          padding: const EdgeInsets.all(32.0),
-          child: _buildForm(),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildForm() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          "Welcome",
-          style: TextStyle(
-              color: myColor, fontSize: 32, fontWeight: FontWeight.w500),
-        ),
-        _buildGreyText("Please login with your information"),
-        const SizedBox(height: 60),
-        _buildGreyText("Email address"),
-        _buildInputField(emailController),
-        const SizedBox(height: 40),
-        _buildGreyText("Password"),
-        _buildInputField(passwordController, isPassword: true),
-        const SizedBox(height: 20),
-        _buildRememberForgot(),
-        const SizedBox(height: 20),
-        _buildLoginButton(),
-        const SizedBox(height: 20),
-        _buildOtherLogin(),
-      ],
     );
   }
 
   Widget _buildGreyText(String text) {
     return Text(
       text,
-      style: const TextStyle(color: Colors.grey),
+      style: TextStyle(color: Colors.black),
     );
   }
 
   Widget _buildInputField(TextEditingController controller,
       {isPassword = false}) {
-    return TextField(
+    return TextFormField(
       controller: controller,
       decoration: InputDecoration(
-        suffixIcon: isPassword
-            ? const Icon(Icons.remove_red_eye)
-            : const Icon(Icons.done),
-      ),
+          suffixIcon:
+              isPassword ? Icon(Icons.remove_red_eye) : Icon(Icons.done),
+          fillColor:
+              Color.fromARGB(255, 0, 211, 53) // Text field background color
+
+          ),
       obscureText: isPassword,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter some text';
+        }
+        return null;
+      },
     );
   }
 
@@ -133,17 +117,20 @@ class _LoginPageState extends State<LoginPage> {
         Row(
           children: [
             Checkbox(
-                value: rememberUser,
-                onChanged: (value) {
-                  setState(() {
-                    rememberUser = value!;
-                  });
-                }),
-            _buildGreyText("Remember me"),
+              value: rememberUser,
+              onChanged: (value) {
+                setState(() {
+                  rememberUser = value!;
+                });
+              },
+            ),
+            _buildGreyText('Remember me'),
           ],
         ),
         TextButton(
-            onPressed: () {}, child: _buildGreyText("I forgot my password"))
+          onPressed: () {},
+          child: _buildGreyText('I forgot my password'),
+        )
       ],
     );
   }
@@ -151,16 +138,24 @@ class _LoginPageState extends State<LoginPage> {
   Widget _buildLoginButton() {
     return ElevatedButton(
       onPressed: () {
-        debugPrint("Email : ${emailController.text}");
-        debugPrint("Password : ${passwordController.text}");
+        if (_formKey.currentState!.validate()) {
+          debugPrint('Email : ${emailController.text}');
+          debugPrint('Password : ${passwordController.text}');
+          // You can navigate to the signup page like this:
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => HomePage()),
+          );
+        }
       },
       style: ElevatedButton.styleFrom(
-        shape: const StadiumBorder(),
+        shape: StadiumBorder(),
         elevation: 20,
-        shadowColor: myColor,
-        minimumSize: const Size.fromHeight(60),
+        shadowColor: Colors.lightGreen,
+        minimumSize: Size.fromHeight(60),
+        primary: Colors.lightGreen, // Set button color to light green
       ),
-      child: const Text("LOGIN"),
+      child: Text('LOGIN', style: TextStyle(color: Colors.white)),
     );
   }
 
@@ -168,12 +163,12 @@ class _LoginPageState extends State<LoginPage> {
     return Center(
       child: Column(
         children: [
-          _buildGreyText("Or Login with"),
-          const SizedBox(height: 10),
+          _buildGreyText('Or Login with'),
+          SizedBox(height: 10),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              Tab(icon: Image.asset("assets/google.jpeg")),
+              Tab(icon: Image.asset('assets/google.jpeg')),
             ],
           )
         ],

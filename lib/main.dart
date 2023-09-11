@@ -1,3 +1,4 @@
+import 'package:dart_app/landing.dart';
 import 'package:dart_app/login_page.dart';
 import 'package:dart_app/signup_page.dart';
 import 'package:flutter/material.dart';
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // ignore: prefer_const_constructors
-      home: SignupPage(),
+      home: LandingPage(),
       debugShowCheckedModeBanner: false,
     );
   }
