@@ -1,7 +1,5 @@
-import 'package:dart_app/landing.dart';
-import 'package:dart_app/login_page.dart';
-import 'package:dart_app/signup_page.dart';
 import 'package:flutter/material.dart';
+import 'Landing_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -10,7 +8,6 @@ void main() {
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return MaterialApp(

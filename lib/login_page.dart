@@ -1,6 +1,7 @@
-import 'package:dart_app/home_page.dart';
 import 'package:flutter/material.dart';
-import 'signup_page.dart'; // Import the SignupPage where you navigate when clicking the "Sign Up" button.
+import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
+import 'home_page.dart';
+import 'signup_page.dart';
 
 void main() {
   runApp(LoginPage());
@@ -20,6 +21,21 @@ class _LoginPageState extends State<LoginPage> {
   bool passwordVisible = false; // Track password visibility
 
   @override
+  void initState() {
+    super.initState();
+    _loadSavedUserData(); // Load saved user data from SharedPreferences when the page initializes.
+  }
+
+  Future<void> _loadSavedUserData() async {
+    final prefs = await SharedPreferences.getInstance();
+    setState(() {
+      // Retrieve saved data and populate the fields
+      emailController.text = prefs.getString('email') ?? '';
+      rememberUser = prefs.getBool('rememberUser') ?? false;
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
@@ -34,7 +50,7 @@ class _LoginPageState extends State<LoginPage> {
         body: Stack(
           children: [
             Image.asset(
-              'assets/farm.jpeg', // Replace with your image asset
+              'assets/farm.jpeg',
               fit: BoxFit.cover,
               width: double.infinity,
               height: double.infinity,
@@ -69,7 +85,7 @@ class _LoginPageState extends State<LoginPage> {
                         SizedBox(height: 20),
                         _buildLoginButton(),
                         SizedBox(height: 20),
-                        _buildOtherLogin(),
+                        _buildSignUpButton(),
                       ],
                     ),
                   ),
@@ -141,7 +157,7 @@ class _LoginPageState extends State<LoginPage> {
         if (_formKey.currentState!.validate()) {
           debugPrint('Email : ${emailController.text}');
           debugPrint('Password : ${passwordController.text}');
-          // You can navigate to the signup page like this:
+          // You can navigate to the home page like this:
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => HomePage()),
@@ -159,20 +175,31 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildOtherLogin() {
-    return Center(
-      child: Column(
-        children: [
-          _buildGreyText('Or Login with'),
-          SizedBox(height: 10),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              Tab(icon: Image.asset('assets/google.jpeg')),
-            ],
-          )
-        ],
-      ),
+  Widget _buildSignUpButton() {
+    return Column(
+      children: [
+        Text("If you don't have an account, click here to"),
+        SizedBox(height: 10),
+        ElevatedButton(
+          onPressed: () {
+            // Navigate to the signup page when the "Sign Up" button is pressed.
+            Navigator.push(
+              context,
+              MaterialPageRoute(
+                  builder: (context) =>
+                      SignupPage()), // Navigate to the SignupPage
+            );
+          },
+          style: ElevatedButton.styleFrom(
+            shape: StadiumBorder(),
+            elevation: 20,
+            shadowColor: Colors.lightGreen,
+            minimumSize: Size.fromHeight(60),
+            primary: Colors.lightGreen, // Set button color to light green
+          ),
+          child: Text('SIGN UP', style: TextStyle(color: Colors.white)),
+        ),
+      ],
     );
   }
 }

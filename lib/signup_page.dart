@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:shared_preferences/shared_preferences.dart'; // Import shared_preferences
+
 import 'login_page.dart';
 
 void main() {
@@ -34,9 +36,11 @@ class _SignupPageState extends State<SignupPage> {
       home: Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.lightGreen, // Set header color to light green
-          title: Text('Sign Up',
-              style: TextStyle(
-                  color: Colors.white)), // Set header text color to white
+          title: Text(
+            'Sign Up',
+            style: TextStyle(
+                color: Colors.white), // Set header text color to white
+          ),
         ),
         body: Stack(
           children: [
@@ -151,9 +155,16 @@ class _SignupPageState extends State<SignupPage> {
                                     return 'Please enter a Password';
                                   }
                                   if (value != confirmPassword) {
+                                    setState(() {
+                                      passwordMatch = false;
+                                    });
                                     return 'Passwords do not match';
-                                  } else
+                                  } else {
+                                    setState(() {
+                                      passwordMatch = true;
+                                    });
                                     return null;
+                                  }
                                 },
                                 onSaved: (value) {
                                   password = value!;
@@ -191,9 +202,16 @@ class _SignupPageState extends State<SignupPage> {
                                     return 'Please confirm your Password';
                                   }
                                   if (value != password) {
+                                    setState(() {
+                                      passwordMatch = false;
+                                    });
                                     return 'Passwords do not match';
+                                  } else {
+                                    setState(() {
+                                      passwordMatch = true;
+                                    });
+                                    return null;
                                   }
-                                  return null;
                                 },
                                 onSaved: (value) {
                                   confirmPassword = value!;
@@ -253,21 +271,12 @@ class _SignupPageState extends State<SignupPage> {
                         ),
                         SizedBox(height: 20),
                         ElevatedButton(
-                          onPressed: () {
+                          onPressed: () async {
                             // Validate the form
                             if (_formKey.currentState!.validate()) {
-                              // If the form is valid, save the data.
+                              // If the form is valid, save the data to shared_preferences.
                               _formKey.currentState!.save();
-                              // You can now use the validated data.
-                              // For example, print it to the console:
-                              print('First Name: $firstName');
-                              print('Surname: $surname');
-                              print('Email: $email');
-                              print('Phone Number: $phoneNumber');
-                              print('Role: $selectedRole');
-                              print('Password: $password');
-                              print('Confirm Password: $confirmPassword');
-                              print('Agreed to Terms: $agreedToTerms');
+                              await _saveUserDataToSharedPreferences();
 
                               // Navigate to the login page
                               Navigator.push(
@@ -281,10 +290,10 @@ class _SignupPageState extends State<SignupPage> {
                             primary: Colors
                                 .lightGreen, // Set button color to light green
                           ),
-                          child: Text('Sign Up',
-                              style: TextStyle(
-                                  color: Colors
-                                      .white)), // Set button text color to white
+                          child: Text(
+                            'Sign Up',
+                            style: TextStyle(color: Colors.white),
+                          ), // Set button text color to white
                         ),
                       ],
                     ),
@@ -296,5 +305,12 @@ class _SignupPageState extends State<SignupPage> {
         ),
       ),
     );
+  }
+
+  Future<void> _saveUserDataToSharedPreferences() async {
+    final prefs = await SharedPreferences.getInstance();
+    prefs.setString('email', email);
+    prefs.setString('password', password);
+    prefs.setString('role', selectedRole);
   }
 }

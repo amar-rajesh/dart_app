@@ -10,7 +10,7 @@ class LandingPage extends StatelessWidget {
         children: [
           // Background Image
           Image.asset(
-            'assets/farm.jpeg', // Update the path to your image
+            'assets/farm.jpeg',
             width: double.infinity,
             height: double.infinity,
             fit: BoxFit.cover,
